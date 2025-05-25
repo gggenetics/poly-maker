@@ -15,6 +15,31 @@ wk_vol = spreadsheet.worksheet("Volatility Markets")
 
 sel_df = get_sel_df(spreadsheet, "Selected Markets")
 
+def update_selected_markets_from_volatility(volatility_df, spreadsheet):
+    """
+    Update the Selected Markets tab based on the Volatility Markets data.
+    Creates entries with trade_size derived from min_size and param_type set to 'mid'.
+    """
+    try:
+        # Create the selected markets dataframe
+        selected_markets_df = pd.DataFrame({
+            'question': volatility_df['question'],
+            'trade_size': volatility_df['min_size'],
+            'param_type': 'mid'
+        })
+        
+        # Get the Selected Markets worksheet
+        wk_selected = spreadsheet.worksheet("Selected Markets")
+        
+        # Update the sheet with the new data
+        update_sheet(selected_markets_df, wk_selected)
+        
+        print(f'{pd.to_datetime("now")}: Updated Selected Markets with {len(selected_markets_df)} markets.')
+        
+    except Exception as e:
+        print(f'{pd.to_datetime("now")}: Error updating Selected Markets: {str(e)}')
+        traceback.print_exc()
+
 def update_sheet(data, worksheet):
     all_values = worksheet.get_all_values()
     existing_num_rows = len(all_values)
@@ -117,6 +142,9 @@ def fetch_and_process_data():
         update_sheet(new_df, wk_all)
         update_sheet(volatility_df, wk_vol)
         update_sheet(m_data, wk_full)
+        
+        # Automatically update Selected Markets based on Volatility Markets
+        update_selected_markets_from_volatility(volatility_df, spreadsheet)
     else:
         print(f'{pd.to_datetime("now")}: Not updating sheet because of length {len(new_df)}.')
 

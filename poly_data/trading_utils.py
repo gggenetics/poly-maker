@@ -25,6 +25,14 @@ import poly_data.global_state as global_state
 #                 return 0
 #     return api_avgPrice
 
+
+# Error performing trade for 0x029b97c107ad80bb70e0a8047336c482e718b3a43270d07214e824e70a5dfe33
+# Traceback (most recent call last):
+#   File "/Users/hharris/Desktop/New Projects/Polymarket/poly-maker/trading.py", line 163, in perform_trade
+#     deets = get_best_bid_ask_deets(market, detail['name'], 100, 0.1)
+#   File "/Users/hharris/Desktop/New Projects/Polymarket/poly-maker/poly_data/trading_utils.py", line 39, in get_best_bid_ask_deets
+#     best_bid, second_best_bid, top_bid, best_ask, second_best_ask, top_ask = 1 - best_ask, 1 - second_best_ask, 1 - top_ask, 1 - best_bid, 1 - second_best_bid, 1 - top_bid
+
 def get_best_bid_ask_deets(market, name, size, deviation_threshold=0.05):
 
     best_bid, best_bid_size, second_best_bid, second_best_bid_size, top_bid = find_best_price_with_size(global_state.all_data[market]['bids'], size, reverse=True)
@@ -139,10 +147,10 @@ def get_buy_sell_amount(position, bid_price, row):
         buy_amount = row['min_size']
 
     if bid_price < 0.1:
-
-        if row['multiplier'] != '':
-            print(f"Multiplying buy amount by {int(row['multiplier'])}")
-            buy_amount = buy_amount * int(row['multiplier'])
+        pass
+        # if row['multiplier'] != '':
+        #     print(f"Multiplying buy amount by {int(row['multiplier'])}")
+        #     buy_amount = buy_amount * int(row['multiplier'])
 
     return buy_amount, sell_amount
 
