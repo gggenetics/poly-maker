@@ -8,7 +8,7 @@ from py_clob_client.constants import POLYGON
 
 # Web3 libraries for blockchain interaction
 from web3 import Web3
-from web3.middleware import geth_poa_middleware
+from web3.middleware import ExtraDataToPOAMiddleware
 from eth_account import Account
 
 import requests                     # HTTP requests
@@ -71,7 +71,7 @@ class PolymarketClient:
         
         # Initialize Web3 connection to Polygon
         web3 = Web3(Web3.HTTPProvider("https://polygon-rpc.com"))
-        web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        web3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
         
         # Set up USDC contract for balance checks
         self.usdc_contract = web3.eth.contract(

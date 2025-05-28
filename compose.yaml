@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  poly-maker:
+    build: .
+    container_name: poly-maker-bot
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./positions:/app/positions
+      - ./.env:/app/.env
+      - ./credentials.json:/app/credentials.json
+    networks:
+      - polymaker_network
+    # Uncomment if you want to run different scripts
+    # command: python update_markets.py
+
+  # Optional: Run market updater as separate service
+  market-updater:
+    build: .
+    container_name: poly-market-updater
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env
+      - ./credentials.json:/app/credentials.json
+    command: python update_markets.py
+    networks:
+      - polymaker_network
+
+  # Optional: Run stats updater as separate service  
+  stats-updater:
+    build: .
+    container_name: poly-stats-updater
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env
+      - ./credentials.json:/app/credentials.json
+    command: python update_stats.py
+    networks:
+      - polymaker_network
+
+networks:
+  polymaker_network:
+    driver: bridge
